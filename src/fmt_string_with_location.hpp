@@ -7,6 +7,9 @@
 
 namespace mlogpp {
 
+template <typename T>
+concept StringConvertible = std::convertible_to<T, std::string_view>;
+
 /**
  * @brief A structure that combines a format string with its source location
  * information.
@@ -25,7 +28,7 @@ struct FormatStringWithLocation {
    * @param loc The source location where this constructor is called. Defaults
    * to the call site.
    */
-  template <typename T>
+  template <StringConvertible T>
   constexpr FormatStringWithLocation(
       T const& fmt,
       std::source_location const loc = std::source_location::current())
