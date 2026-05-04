@@ -1,0 +1,5 @@
+build --compiler=clang
+
+build --cxxopt=-Wall --cxxopt=-Wextra --cxxopt=-Werror
+build --cxxopt=-std=c++23
+
