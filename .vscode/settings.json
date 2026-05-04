@@ -1,0 +1,4 @@
+{
+    "editor.formatOnSave": true,
+    "clangd.path": "clangd-20"
+}
