@@ -15,10 +15,10 @@ struct RegistryImpl {
   mutable std::shared_mutex mtx;
   std::unordered_map<std::string, std::shared_ptr<Logger>> loggers;
 
-  std::shared_ptr<Logger> find(std::string_view const name) const;
+  std::shared_ptr<Logger> find(std::string_view name) const;
 
   // Insert or replace. Caller must hold an exclusive lock.
-  void store(std::shared_ptr<Logger> const lgr);
+  void store(std::shared_ptr<Logger> const& lgr);
 };
 }  // namespace
 
