@@ -1,5 +1,6 @@
 #include "registry.hpp"
 #include "src/sink.hpp"
+#include <memory>
 #include <mutex>
 namespace mlogpp {
 
@@ -24,7 +25,7 @@ Registry::Registry() : pimpl_(std::make_unique<RegistryImpl>()) {
   pimpl_->store(std::move(root_lgr));
 }
 
-[[nodiscard]] std::shared_ptr<Logger> Registry::Get(
+[[nodiscard]] std::shared_ptr<Logger> Registry::GetImpl(
     std::string_view const name) {
   {
     std::shared_lock lock(pimpl_->mtx);
