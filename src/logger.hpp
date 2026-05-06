@@ -38,7 +38,7 @@ class Logger {
    * @param sink Sink to add.
    * @return Logger& Reference to the logger, allowing for method chaining.
    */
-  Logger& AddSink(Sink const&& sink) noexcept {
+  Logger& AddSink(Sink&& sink) noexcept {
     sinks_.push_back(sink);
     return *this;
   };
@@ -159,8 +159,8 @@ class Logger {
    *
    * @param r Log record to emit.
    */
-  void Emit(LogRecord const& r) const noexcept {
-    for (Sink const& sink : sinks_) {
+  void Emit(LogRecord const& r) noexcept {
+    for (Sink& sink : sinks_) {
       sink(r);
     }
   };
@@ -172,6 +172,8 @@ class Logger {
   /// Minimum log level. Log records below this level will be ignored.
   LogLevel min_level_;
 };
+
+using LoggerPtr = std::shared_ptr<Logger>;
 
 }  // namespace mlogpp
 #endif  // MLOGPP_LOGGER_HPP_
