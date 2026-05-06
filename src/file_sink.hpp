@@ -9,6 +9,8 @@
 
 namespace mlogpp {
 
+// TODO (yusufemresamur) : Make formatter configurable
+
 /**
  * @brief A sink that writes log records to a file. The file is opened in append
  * mode.
