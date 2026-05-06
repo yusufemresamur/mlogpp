@@ -45,7 +45,7 @@ class Sink {
    *
    * @param r Log record to pass to the sink function.
    */
-  void operator()(LogRecord const& r) const { impl_->Call(r); }
+  void operator()(LogRecord const& r) { impl_->Call(r); }
 
  private:
   /**
@@ -70,7 +70,7 @@ class Sink {
   struct SinkModel final : SinkConcept {
     explicit SinkModel(S&& s) : s_(std::move(s)) {}
     void Call(LogRecord const& r) override { s_(r); }
-    S const s_;
+    S s_;
   };
 
   /// Pointer to the type-erased sink implementation.
