@@ -1,4 +1,6 @@
 #pragma once
+#ifndef MLOGPP_SINK_HPP_
+#define MLOGPP_SINK_HPP_
 #include "record.hpp"
 #include "src/formatter.hpp"
 #include <concepts>
@@ -87,3 +89,4 @@ class Sink {
 };
 
 }  // namespace mlogpp
+#endif  // MLOGPP_SINK_HPP_
