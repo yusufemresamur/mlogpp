@@ -6,6 +6,7 @@ cc_library(
         ":registry_impl.cpp",
     ],
     hdrs = [
+        ":file_sink.hpp",
         ":fmt_string_with_location.hpp",
         ":formatter.hpp",
         ":level.hpp",
