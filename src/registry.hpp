@@ -47,9 +47,21 @@ class Registry {
    * @brief Get or create a named logger. Thread-safe.
    *
    * @param name Name of the logger to retrieve or create.
-   * @return std::shared_ptr<Logger> Shared pointer to the requested logger.
+   * @return LoggerPtr Shared pointer to the requested logger.
    */
-  [[nodiscard]] std::shared_ptr<Logger> Get(std::string_view name);
+  [[nodiscard]] static LoggerPtr Get(std::string_view name) {
+    return instance().GetImpl(name);
+  }
+
+  /**
+   * @brief Get or create a named logger as a reference. Thread-safe.
+   *
+   * @param name Name of the logger to retrieve or create.
+   * @return Logger& Reference to the requested logger.
+   */
+  [[nodiscard]] static Logger& GetRef(std::string_view name) {
+    return *instance().GetImpl(name);
+  }
 
   /**
    * @brief Remove a logger from the registry. Thread-safe.
@@ -63,14 +75,32 @@ class Registry {
    * global logging. The root logger is created on demand and shared across the
    * application.
    *
-   * @return std::shared_ptr<Logger> Shared pointer to the root logger.
+   * @return LoggerPtr Shared pointer to the root logger.
    */
-  [[nodiscard]] static std::shared_ptr<Logger> root() {
-    return instance().Get("root");
+  [[nodiscard]] static LoggerPtr Root() {
+    return mlogpp::Registry::Get("root");
+  };
+
+  /**
+   * @brief Get the root logger as a reference.
+   *
+   * @return Logger& Reference to the root logger.
+   */
+  [[nodiscard]] static Logger& RootRef() {
+    return *mlogpp::Registry::Get("root");
   };
 
  private:
   Registry();
+
+  /**
+   * @brief Internal implementation for getting or creating a logger.
+   *
+   * @param name Name of the logger to retrieve or create.
+   * @return LoggerPtr Shared pointer to the requested logger.
+   */
+  LoggerPtr GetImpl(std::string_view name);
+
   /// Pimpl idiom to hide implementation details.
   std::unique_ptr<RegistryImpl> pimpl_;
 };
@@ -82,32 +112,32 @@ class Registry {
 
 template <typename... Args>
 void Trace(FormatStringWithLocation const msg, Args&&... args) {
-  Registry::root()->Trace(msg, std::forward<Args>(args)...);
+  Registry::RootRef().Trace(msg, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
 void Debug(FormatStringWithLocation const msg, Args&&... args) {
-  Registry::root()->Debug(msg, std::forward<Args>(args)...);
+  Registry::RootRef().Debug(msg, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
 void Info(FormatStringWithLocation const msg, Args&&... args) {
-  Registry::root()->Info(msg, std::forward<Args>(args)...);
+  Registry::RootRef().Info(msg, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
 void Warn(FormatStringWithLocation const msg, Args&&... args) {
-  Registry::root()->Warn(msg, std::forward<Args>(args)...);
+  Registry::RootRef().Warn(msg, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
 void Error(FormatStringWithLocation const msg, Args&&... args) {
-  Registry::root()->Error(msg, std::forward<Args>(args)...);
+  Registry::RootRef().Error(msg, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
 void Fatal(FormatStringWithLocation const msg, Args&&... args) {
-  Registry::root()->Fatal(msg, std::forward<Args>(args)...);
+  Registry::RootRef().Fatal(msg, std::forward<Args>(args)...);
 }
 
 }  // namespace mlogpp
