@@ -1,6 +1,6 @@
 # mlogpp
 
-A lightweight moddern C++ logging library with type-safe sinks, log levels, and thread-safe named loggers.
+A lightweight modern C++ logging library with type-safe sinks, log levels, and thread-safe named loggers.
 
 ## Features
 
