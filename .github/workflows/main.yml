@@ -1,0 +1,11 @@
+name: Bazel build
+on: [push]
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup Bazel
+      uses: abhinavsingh/setup-bazel@v3
+    - name: Bazel build
+      run: bazel build //...
+          
