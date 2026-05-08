@@ -11,5 +11,5 @@ jobs:
       with:
         bazelisk-version: "1.29.0"
     - name: Bazel build
-      run: bazel build //...
+      run: bazelisk build //...
           
