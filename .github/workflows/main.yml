@@ -4,6 +4,8 @@ jobs:
   Build:
     runs-on: ubuntu-latest
     steps:
+    - name: Install clang
+      run: sudo apt install -y clang
     - name: Checkout
       uses: actions/checkout@v6
     - name: Setup Bazel
