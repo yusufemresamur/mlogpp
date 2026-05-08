@@ -8,6 +8,8 @@ jobs:
       uses: actions/checkout@v6
     - name: Setup Bazel
       uses: abhinavsingh/setup-bazel@v3
+      with:
+        bazelisk-version: "1.29.0"
     - name: Bazel build
       run: bazel build //...
           
