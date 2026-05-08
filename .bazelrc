@@ -1,5 +1,6 @@
-build --compiler=clang
-
 build --cxxopt=-Wall --cxxopt=-Wextra --cxxopt=-Werror
 build --cxxopt=-std=c++23
 
+build:clang --platforms=@toolchains_llvm//platforms:linux-x86_64 
+
+build --config=clang
