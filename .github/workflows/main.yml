@@ -1,17 +1,28 @@
 name: Bazel build
 on: [push]
+
+env:
+  BAZELISK_VERSION: "1.29.0"
+
 jobs:
-  Build:
+  Checkout:
     runs-on: ubuntu-latest
     steps:
-    - name: Install clang
-      run: sudo apt install -y clang
     - name: Checkout
       uses: actions/checkout@v6
+  Prepare:
+    runs-on: ubuntu-latest
+    steps:
     - name: Setup Bazel
       uses: abhinavsingh/setup-bazel@v3
       with:
-        bazelisk-version: "1.29.0"
+        bazelisk-version: ${{ env.BAZELISK_VERSION }}
+        bazelisk-cache: true
+        disk-cache: ${{ github.workflow }}
+  Build:
+    runs-on: ubuntu-latest
+    needs: [Checkout, Prepare]
+    steps:
     - name: Bazel build
       run: bazelisk build //...
           
