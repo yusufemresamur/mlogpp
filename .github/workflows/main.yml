@@ -14,6 +14,7 @@ jobs:
         bazelisk-version: ${{ env.BAZELISK_VERSION }}
         bazelisk-cache: true
         disk-cache: ${{ github.workflow }}
+        repository-cache: true
     - name: Checkout
       uses: actions/checkout@v6
     - name: Bazel build
