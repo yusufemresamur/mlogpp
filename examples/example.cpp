@@ -5,29 +5,30 @@
 #include "src/logger.hpp"
 #include "src/registry.hpp"
 #include "src/sink.hpp"
-#include <cassert>
 
 int main() {
-  // Log a message using the root logger (access as reference).
-  mlogpp::Registry::RootRef().Info("Hello, {}!", "world");
-  // Log a message using the root logger (access as shared pointer).
-  mlogpp::Registry::Root()->Info("Hello, {}!", "world 2");
+  // Example 1: Root logger with default console sink
+  std::println("1. Root Logger (Console Output):");
+  auto& root = mlogpp::Registry::RootRef();
+  root.Info("Application started");
+  root.Warn("This is a warning from root logger");
+  std::println("");
 
-  // Or simply:
-  mlogpp::Info("Hello {}", "world 3");
+  // Example 2: Application logger with multiple sinks and different formatters
+  std::println("2. Application Logger (Console + JSON File):");
+  auto& app_logger = mlogpp::Registry::GetRef("app");
+  app_logger
+      // Console sink uses default text formatter
+      .AddSink(mlogpp::MakeConsoleSink<mlogpp::DefaultFormatter>())
+      // File sink uses JSON formatter for structured logging
+      .AddSink(mlogpp::MakeFileSink<mlogpp::JSONFormatter>("app.jsonl"))
+      .SetMinLevel(mlogpp::LogLevel::kInfo);
 
-  mlogpp::Logger& logger =
-      mlogpp::Registry::GetRef("app")
-          .AddSink(mlogpp::MakeConsoleSink())
-          .AddSink(mlogpp::MakeFileSink<mlogpp::JSONFormatter>("app.jsonl"))
-          .SetMinLevel(mlogpp::LogLevel::kWarn);
-  logger.Info("Hello, {}!", "world 4");  // Will no be shown
-  logger.Warn("Hello, {}!", "world 5");
-  logger.Error("Hello, {}!", "world 6");
-
-  // Get the same logger again as shared_ptr
-  mlogpp::LoggerPtr logger_ptr = mlogpp::Registry::Get("app");
-  assert(logger_ptr.get() == &logger);
+  app_logger.Info("Initializing application components");
+  app_logger.Debug("Debug message (will be filtered out - min level is Info)");
+  app_logger.Warn("Configuration loaded with 2 warnings");
+  app_logger.Error("Failed to connect to secondary database");
+  std::println("");
 
   return 0;
 }
