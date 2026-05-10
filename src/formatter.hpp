@@ -18,20 +18,6 @@ concept FormatterFunction = requires(F f, LogRecord const& r) {
 };
 
 /**
- * @brief Concept for structured formatters. Must satisfy FormatterFunction and
- * provide Header(), Footer(), and Separator() methods for structured output
- * (e.g., JSON arrays).
- *
- * @tparam F Formatter function type.
- */
-template <typename F>
-concept StructuredFormatter = FormatterFunction<F> && requires(F f) {
-  { f.Header() } -> std::convertible_to<std::string>;
-  { f.Footer() } -> std::convertible_to<std::string>;
-  { f.Separator() } -> std::convertible_to<std::string>;
-};
-
-/**
  * @brief Default formatter for log records. Output format: "[timestamp] [level]
  * [logger_name] [file:line] - message"
  *
@@ -55,10 +41,6 @@ static_assert(FormatterFunction<DefaultFormatter>,
  *
  */
 struct JSONFormatter {
-  static constexpr std::string Header() { return "["; }
-  static constexpr std::string Footer() { return "]"; }
-  static constexpr std::string Separator() { return ","; }
-
   [[nodiscard]] std::string operator()(LogRecord const& r) const {
     return std::format(
         R"({{"timestamp": {}, "level": "{}", "logger_name": "{}", "file": "{}", "line": {}, "message": "{}"}})",
@@ -70,11 +52,8 @@ struct JSONFormatter {
   };
 };
 
-static_assert(StructuredFormatter<JSONFormatter>,
-              "JSONFormatter must satisfy StructuredFormatter concept");
-
-// TODO(yusufemresamur): Fix issue with footer not removed when file is
-// reopened.
+static_assert(FormatterFunction<JSONFormatter>,
+              "JSONFormatter must satisfy FormatterFunction concept");
 
 }  // namespace mlogpp
 #endif  // MLOGPP_FORMATTER_HPP_

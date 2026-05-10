@@ -31,27 +31,17 @@ class FileSink {
     if (!file_) {
       throw std::runtime_error("Failed to open log file: " + path_.string());
     }
-
-    if constexpr (StructuredFormatter<F>) {
-      // If the file is new (size is 0), write the header
-      if (std::filesystem::file_size(path_) == 0) {
-        WriteHeader();
-      }
-    }
   };
 
-  FileSink(FileSink const&) = delete;
-  FileSink& operator=(FileSink const&) = delete;
+  FileSink(FileSink const&) =
+      delete("FileSink manages file stream and is not copyable");
+  FileSink& operator=(FileSink const&) =
+      delete("FileSink manages file stream and is not copyable");
 
   FileSink(FileSink&&) noexcept = default;
   FileSink& operator=(FileSink&&) noexcept = default;
 
-  ~FileSink() {
-    if constexpr (StructuredFormatter<F>) {
-      WriteFooter();
-    }
-    file_.close();
-  }
+  ~FileSink() = default;
 
   /**
    * @brief Write a log record to the file.
@@ -61,36 +51,14 @@ class FileSink {
   void operator()(LogRecord const& record) { WriteRecord(record); };
 
  private:
-  void WriteHeader() {
-    if constexpr (StructuredFormatter<F>) {
-      file_ << formatter_.Header();
-    }
-  }
-
-  void WriteFooter() {
-    if constexpr (StructuredFormatter<F>) {
-      file_ << formatter_.Footer();
-    }
-  }
-
-  void WriteRecord(LogRecord const& r) {
-    if constexpr (StructuredFormatter<F>) {
-      if (!first_record_) {
-        file_ << formatter_.Separator();
-      }
-      first_record_ = false;
-    }
-    file_ << formatter_(r);
-  }
+  void WriteRecord(LogRecord const& r) { file_ << formatter_(r) << std::endl; }
 
   /// File stream for writing log records to the file.
   std::fstream file_;
   /// Path to the log file.
   std::filesystem::path path_;
-
+  /// Formatter for formatting log records.
   F formatter_{};
-
-  mutable bool first_record_{true};
 };
 
 /**
