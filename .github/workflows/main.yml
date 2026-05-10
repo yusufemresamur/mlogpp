@@ -1,16 +1,11 @@
-name: Bazel build
+name: Build
 on: [push]
 
 env:
   BAZELISK_VERSION: "1.29.0"
 
 jobs:
-  Checkout:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v6
-  Prepare:
+  Build:
     runs-on: ubuntu-latest
     steps:
     - name: Setup Bazel
@@ -19,10 +14,8 @@ jobs:
         bazelisk-version: ${{ env.BAZELISK_VERSION }}
         bazelisk-cache: true
         disk-cache: ${{ github.workflow }}
-  Build:
-    runs-on: ubuntu-latest
-    needs: [Checkout, Prepare]
-    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
     - name: Bazel build
       run: bazelisk build //...
           
