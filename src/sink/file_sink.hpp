@@ -3,7 +3,7 @@
 #define MLOGPP_FILE_SINK_HPP_
 #include "src/formatter.hpp"
 #include "src/record.hpp"
-#include "src/sink.hpp"
+#include "src/sink/sink.hpp"
 #include <filesystem>
 #include <fstream>
 
