@@ -2,10 +2,10 @@
 #ifndef MLOGPP_LOGGER_HPP_
 #define MLOGPP_LOGGER_HPP_
 
-#include "fmt_string_with_location.hpp"
-#include "level.hpp"
-#include "record.hpp"
-#include "sink.hpp"
+#include "src/fmt_string_with_location.hpp"
+#include "src/level.hpp"
+#include "src/record.hpp"
+#include "src/sink/sink.hpp"
 #include <string>
 #include <vector>
 namespace mlogpp {

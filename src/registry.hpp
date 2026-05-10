@@ -1,8 +1,8 @@
 #pragma once
 #ifndef MLOGPP_REGISTRY_HPP_
 #define MLOGPP_REGISTRY_HPP_
-#include "fmt_string_with_location.hpp"
-#include "logger.hpp"
+#include "src/fmt_string_with_location.hpp"
+#include "src/logger.hpp"
 #include <memory>
 #include <shared_mutex>
 #include <string_view>

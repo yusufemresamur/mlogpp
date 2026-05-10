@@ -1,5 +1,5 @@
-#include "registry.hpp"
-#include "src/sink.hpp"
+#include "src/registry.hpp"
+#include "src/sink/sink.hpp"
 #include <memory>
 #include <mutex>
 namespace mlogpp {

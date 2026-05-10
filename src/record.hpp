@@ -1,7 +1,7 @@
 #pragma once
 #ifndef MLOGPP_RECORD_HPP_
 #define MLOGPP_RECORD_HPP_
-#include "level.hpp"
+#include "src/level.hpp"
 #include <chrono>
 #include <cstdio>
 #include <ctime>

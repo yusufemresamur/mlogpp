@@ -2,7 +2,7 @@
 #ifndef MLOGPP_FORMATTER_HPP_
 #define MLOGPP_FORMATTER_HPP_
 
-#include "record.hpp"
+#include "src/record.hpp"
 #include <concepts>
 namespace mlogpp {
 

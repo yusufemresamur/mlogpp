@@ -1,10 +1,10 @@
 
-#include "src/file_sink.hpp"
 #include "src/formatter.hpp"
 #include "src/level.hpp"
 #include "src/logger.hpp"
 #include "src/registry.hpp"
-#include "src/sink.hpp"
+#include "src/sink/file_sink.hpp"
+#include "src/sink/sink.hpp"
 
 int main() {
   // Example 1: Root logger with default console sink
