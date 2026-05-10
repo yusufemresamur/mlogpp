@@ -1,5 +1,6 @@
 
 #include "src/file_sink.hpp"
+#include "src/formatter.hpp"
 #include "src/level.hpp"
 #include "src/logger.hpp"
 #include "src/registry.hpp"
@@ -15,10 +16,11 @@ int main() {
   // Or simply:
   mlogpp::Info("Hello {}", "world 3");
 
-  mlogpp::Logger& logger = mlogpp::Registry::GetRef("app")
-                               .AddSink(mlogpp::MakeConsoleSink())
-                               .AddSink(mlogpp::MakeFileSink("app.log"))
-                               .SetMinLevel(mlogpp::LogLevel::kWarn);
+  mlogpp::Logger& logger =
+      mlogpp::Registry::GetRef("app")
+          .AddSink(mlogpp::MakeConsoleSink())
+          .AddSink(mlogpp::MakeFileSink<mlogpp::JSONFormatter>("app.log"))
+          .SetMinLevel(mlogpp::LogLevel::kWarn);
   logger.Info("Hello, {}!", "world 4");  // Will no be shown
   logger.Warn("Hello, {}!", "world 5");
 
