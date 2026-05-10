@@ -80,12 +80,14 @@ class Sink {
 /**
  * @brief Create a new console sink.
  *
+ * @tparam F Formatter function type, must satisfy the FormatterFunction
+ * concept. Defaults to @c DefaultFormatter.
  * @return Sink Sink which writes log records to the console using the
  * DefaultFormatter.
  */
+template <FormatterFunction F = DefaultFormatter>
 [[nodiscard]] inline Sink MakeConsoleSink() noexcept {
-  return Sink{
-      [](LogRecord const& r) { std::println("{}", DefaultFormatter{}(r)); }};
+  return Sink{[](LogRecord const& r) { std::println("{}", F{}(r)); }};
 };
 
 }  // namespace mlogpp
