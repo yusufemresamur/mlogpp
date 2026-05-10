@@ -4,6 +4,7 @@
 #include "src/formatter.hpp"
 #include "src/record.hpp"
 #include <concepts>
+#include <memory>
 #include <print>
 
 namespace mlogpp {
@@ -35,9 +36,16 @@ class Sink {
    * @param s Sink function to wrap.
    */
   template <SinkFunction S>
+    requires(!std::same_as<std::decay_t<S>, Sink>)
   explicit Sink(S&& s)
       : impl_(
             std::make_shared<SinkModel<std::decay_t<S>>>(std::forward<S>(s))) {}
+
+  // Explicitly allow copying and moving of Sink
+  Sink(Sink const&) = default;
+  Sink& operator=(Sink const&) = default;
+  Sink(Sink&&) noexcept = default;
+  Sink& operator=(Sink&&) noexcept = default;
 
   /**
    * @brief Call the implementation of the sink function with the given log
@@ -63,14 +71,15 @@ class Sink {
   /**
    * @brief Model for the type-erased sink implementation. This is a concrete
    * implementation of the SinkConcept that wraps a specific sink function type.
+   * Stores via shared_ptr to support both movable and non-movable types.
    *
    * @tparam S Type of the sink function, must satisfy the SinkFunction concept.
    */
   template <SinkFunction S>
   struct SinkModel final : SinkConcept {
-    explicit SinkModel(S&& s) : s_(std::move(s)) {}
-    void Call(LogRecord const& r) override { s_(r); }
-    S s_;
+    explicit SinkModel(S&& s) : s_(std::make_shared<S>(std::forward<S>(s))) {}
+    void Call(LogRecord const& r) override { (*s_)(r); }
+    std::shared_ptr<S> s_;
   };
 
   /// Pointer to the type-erased sink implementation.
