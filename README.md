@@ -55,3 +55,7 @@ bazel build //...
 ```bash
 bazel run //examples:example
 ```
+## Compile and run unit tests
+```bash
+bazel test //...
+```
