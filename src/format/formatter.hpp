@@ -35,25 +35,5 @@ struct DefaultFormatter {
 static_assert(FormatterFunction<DefaultFormatter>,
               "DefaultFormatter must satisfy FormatterFunction concept");
 
-/**
- * @brief JSON formatter for log records. Output format contains keys:
- * timestamp, level, logger_name, file, line, message.
- *
- */
-struct JSONFormatter {
-  [[nodiscard]] std::string operator()(LogRecord const& r) const {
-    return std::format(
-        R"({{"timestamp": {}, "level": "{}", "logger_name": "{}", "file": "{}", "line": {}, "message": "{}"}})",
-        std::chrono::duration_cast<std::chrono::milliseconds>(
-            r.timestamp.time_since_epoch())
-            .count(),
-        ToString(r.level), r.logger_name, r.location.file_name(),
-        r.location.line(), r.message);
-  };
-};
-
-static_assert(FormatterFunction<JSONFormatter>,
-              "JSONFormatter must satisfy FormatterFunction concept");
-
 }  // namespace mlogpp
 #endif  // MLOGPP_FORMATTER_HPP_

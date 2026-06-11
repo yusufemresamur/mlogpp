@@ -1,9 +1,9 @@
 #pragma once
 #ifndef MLOGPP_FILE_SINK_HPP_
 #define MLOGPP_FILE_SINK_HPP_
-#include "src/formatter.hpp"
+#include "sink.hpp"
+#include "src/format/formatter.hpp"
 #include "src/record.hpp"
-#include "src/sink/sink.hpp"
 #include <filesystem>
 #include <fstream>
 

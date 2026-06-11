@@ -27,7 +27,7 @@ enum class LogLevel : uint8_t {
  * @return constexpr std::string_view  A string_view containing the string
  * representation of the level. Returns "UNKNOWN" for invalid levels.
  */
-constexpr std::string_view ToString(LogLevel level) noexcept {
+constexpr std::string_view ToString(LogLevel const level) noexcept {
   switch (level) {
     case LogLevel::kTrace:
       return "TRACE";

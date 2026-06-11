@@ -1,10 +1,10 @@
 
-#include "src/formatter.hpp"
-#include "src/level.hpp"
-#include "src/logger.hpp"
-#include "src/registry.hpp"
-#include "src/sink/file_sink.hpp"
-#include "src/sink/sink.hpp"
+#include "mlogpp/format/json_formatter.hpp"
+#include "mlogpp/level.hpp"
+#include "mlogpp/logger.hpp"
+#include "mlogpp/registry.hpp"
+#include "mlogpp/sink/file_sink.hpp"
+#include "mlogpp/sink/sink.hpp"
 
 int main() {
   // Example 1: Root logger with default console sink

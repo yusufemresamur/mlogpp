@@ -1,7 +1,8 @@
 #pragma once
 #ifndef MLOGPP_SINK_HPP_
 #define MLOGPP_SINK_HPP_
-#include "src/formatter.hpp"
+
+#include "src/format/formatter.hpp"
 #include "src/record.hpp"
 #include <concepts>
 #include <memory>
