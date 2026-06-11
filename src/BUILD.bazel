@@ -1,0 +1,39 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "mlogpp_formatter",
+    hdrs = [
+        ":format/formatter.hpp",
+        ":format/json_formatter.hpp",
+    ],
+    include_prefix = "mlogpp",
+)
+
+cc_library(
+    name = "mlogpp_sinks",
+    hdrs = [
+        ":sink/file_sink.hpp",
+        ":sink/sink.hpp",
+    ],
+    include_prefix = "mlogpp",
+)
+
+cc_library(
+    name = "mlogpp",
+    srcs = [
+        ":registry_impl.cpp",
+    ],
+    hdrs = [
+        ":fmt_string_with_location.hpp",
+        ":level.hpp",
+        ":logger.hpp",
+        ":record.hpp",
+        ":registry.hpp",
+    ],
+    include_prefix = "mlogpp",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":mlogpp_formatter",
+        ":mlogpp_sinks",
+    ],
+)
