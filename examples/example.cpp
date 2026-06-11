@@ -4,7 +4,6 @@
 #include "mlogpp/logger.hpp"
 #include "mlogpp/registry.hpp"
 #include "mlogpp/sink/file_sink.hpp"
-#include "mlogpp/sink/sink.hpp"
 
 int main() {
   // Example 1: Root logger with default console sink
