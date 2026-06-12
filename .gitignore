@@ -3,3 +3,6 @@ bazel-bin
 bazel-mlogpp
 bazel-out
 bazel-testlogs
+
+# coverage
+coverage
