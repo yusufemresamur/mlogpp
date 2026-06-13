@@ -3,8 +3,7 @@ build --cxxopt=-std=c++23
 
 build:coverage --cxxopt='-fprofile-instr-generate' --cxxopt='-fcoverage-mapping' --cxxopt='-O0' --cxxopt='-ftest-coverage' --linkopt='-fprofile-instr-generate'
 
-# GCC toolchain — forces system GCC (local_config_cc defaults to clang on this machine)
-build:gcc --extra_toolchains=@local_config_cc_toolchains//:all
-build:gcc --repo_env=CC=/usr/bin/gcc
-build:gcc --repo_env=CXX=/usr/bin/g++
-build:gcc --test_env=COVERAGE_GCOV_PATH=/usr/bin/gcov
+# GCC toolchain (f0rmiga/gcc-toolchain) — hermetic
+# xbin/gcc is the linker driver (not g++), so libstdc++ must be linked explicitly
+build:gcc --extra_toolchains=@gcc_toolchain_x86_64//:cc_toolchain
+build:gcc --linkopt=-lstdc++
