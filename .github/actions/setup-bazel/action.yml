@@ -1,0 +1,14 @@
+name: Setup Bazel
+description: Configure bazelisk with standard caching for this repository
+inputs:
+  bazelisk-version:
+    required: true
+runs:
+  using: composite
+  steps:
+  - uses: bazel-contrib/setup-bazel@0.19.0
+    with:
+      bazelisk-version: ${{ inputs.bazelisk-version }}
+      bazelisk-cache: true
+      disk-cache: ${{ github.workflow }}
+      repository-cache: true

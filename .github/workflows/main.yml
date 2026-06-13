@@ -5,97 +5,62 @@ env:
   BAZELISK_VERSION: "1.29.0"
 
 jobs:
-  build-llvm:
+  build:
+    strategy:
+      matrix:
+        include:
+          - name: llvm
+            flags: ""
+          - name: gcc
+            flags: "--config=gcc"
+    name: build (${{ matrix.name }})
     runs-on: ubuntu-latest
     steps:
-    - name: Setup Bazel
-      uses: bazel-contrib/setup-bazel@0.19.0
+    - uses: actions/checkout@v6
+    - uses: ./.github/actions/setup-bazel
       with:
         bazelisk-version: ${{ env.BAZELISK_VERSION }}
-        bazelisk-cache: true
-        disk-cache: ${{ github.workflow }}
-        repository-cache: true
-    - name: Checkout
-      uses: actions/checkout@v6
-    - name: Bazel build (LLVM)
-      run: bazelisk build //...
-
-  build-gcc:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Setup Bazel
-      uses: bazel-contrib/setup-bazel@0.19.0
-      with:
-        bazelisk-version: ${{ env.BAZELISK_VERSION }}
-        bazelisk-cache: true
-        disk-cache: ${{ github.workflow }}
-        repository-cache: true
-    - name: Checkout
-      uses: actions/checkout@v6
-    - name: Bazel build (GCC)
-      run: bazelisk build --config=gcc //...
+    - name: Build
+      run: bazelisk build ${{ matrix.flags }} //...
 
   example:
-    needs: build-llvm
+    needs: build
     runs-on: ubuntu-latest
     steps:
-    - name: Setup Bazel
-      uses: bazel-contrib/setup-bazel@0.19.0
+    - uses: actions/checkout@v6
+    - uses: ./.github/actions/setup-bazel
       with:
         bazelisk-version: ${{ env.BAZELISK_VERSION }}
-        bazelisk-cache: true
-        disk-cache: ${{ github.workflow }}
-        repository-cache: true
-    - name: Checkout
-      uses: actions/checkout@v6
     - name: Run example
       run: bazelisk run //examples:example
-  
-  tests-llvm:
-    needs: build-llvm
-    runs-on: ubuntu-latest
-    steps:
-    - name: Setup Bazel
-      uses: bazel-contrib/setup-bazel@0.19.0
-      with:
-        bazelisk-version: ${{ env.BAZELISK_VERSION }}
-        bazelisk-cache: true
-        disk-cache: ${{ github.workflow }}
-        repository-cache: true
-    - name: Checkout
-      uses: actions/checkout@v6
-    - name: "Compile and run tests (LLVM)"
-      run: bazelisk test //...
 
-  tests-gcc:
-    needs: build-gcc
+  test:
+    needs: build
+    strategy:
+      matrix:
+        include:
+          - name: llvm
+            flags: ""
+          - name: gcc
+            flags: "--config=gcc"
+    name: test (${{ matrix.name }})
     runs-on: ubuntu-latest
     steps:
-    - name: Setup Bazel
-      uses: bazel-contrib/setup-bazel@0.19.0
+    - uses: actions/checkout@v6
+    - uses: ./.github/actions/setup-bazel
       with:
         bazelisk-version: ${{ env.BAZELISK_VERSION }}
-        bazelisk-cache: true
-        disk-cache: ${{ github.workflow }}
-        repository-cache: true
-    - name: Checkout
-      uses: actions/checkout@v6
-    - name: "Compile and run tests (GCC)"
-      run: bazelisk test --config=gcc //...
+    - name: Test
+      run: bazelisk test ${{ matrix.flags }} //...
 
   coverage:
-    needs: tests-gcc
+    needs: test
     runs-on: ubuntu-latest
     steps:
-    - name: Setup Bazel
-      uses: bazel-contrib/setup-bazel@0.19.0
+    - uses: actions/checkout@v6
+    - uses: ./.github/actions/setup-bazel
       with:
         bazelisk-version: ${{ env.BAZELISK_VERSION }}
-        bazelisk-cache: true
-        disk-cache: ${{ github.workflow }}
-        repository-cache: true
-    - name: Checkout
-      uses: actions/checkout@v6
     - name: Run coverage
       run: |
         bazelisk coverage \
@@ -109,4 +74,3 @@ jobs:
       with:
         files: coverage.lcov
         token: ${{ secrets.CODECOV_TOKEN }}
-
