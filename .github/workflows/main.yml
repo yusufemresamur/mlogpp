@@ -83,5 +83,30 @@ jobs:
     - name: "Compile and run tests (GCC)"
       run: bazelisk test --config=gcc //...
 
-  
+  coverage:
+    needs: build-gcc
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup Bazel
+      uses: bazel-contrib/setup-bazel@0.19.0
+      with:
+        bazelisk-version: ${{ env.BAZELISK_VERSION }}
+        bazelisk-cache: true
+        disk-cache: ${{ github.workflow }}
+        repository-cache: true
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Run coverage
+      run: |
+        bazelisk coverage \
+          --config=gcc \
+          --combined_report=lcov \
+          --instrumentation_filter=//src \
+          //test/...
+        cp "$(bazelisk info output_path)/_coverage/_coverage_report.dat" coverage.lcov
+    - name: Upload to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        files: coverage.lcov
+        token: ${{ secrets.CODECOV_TOKEN }}
 

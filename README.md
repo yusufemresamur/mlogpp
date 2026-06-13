@@ -1,5 +1,7 @@
 # mlogpp
 
+[![Coverage](https://codecov.io/gh/yusufemresamur/mlogpp/graph/badge.svg)](https://codecov.io/gh/yusufemresamur/mlogpp)
+
 A lightweight modern C++ logging library with type-safe sinks, log levels, and thread-safe named loggers.
 
 ## Features
