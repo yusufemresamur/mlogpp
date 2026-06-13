@@ -51,3 +51,18 @@ jobs:
     - name: "Compile and run tests"
       run: bazelisk test //...
 
+  build-gcc:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup Bazel
+      uses: bazel-contrib/setup-bazel@0.19.0
+      with:
+        bazelisk-version: ${{ env.BAZELISK_VERSION }}
+        bazelisk-cache: true
+        disk-cache: ${{ github.workflow }}
+        repository-cache: true
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Bazel build (GCC)
+      run: bazelisk build --config=gcc //...
+
