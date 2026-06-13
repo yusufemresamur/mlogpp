@@ -84,7 +84,7 @@ jobs:
       run: bazelisk test --config=gcc //...
 
   coverage:
-    needs: build-gcc
+    needs: tests-gcc
     runs-on: ubuntu-latest
     steps:
     - name: Setup Bazel
