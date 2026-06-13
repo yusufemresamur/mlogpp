@@ -2,6 +2,7 @@
 #ifndef MLOGPP_LOGGER_HPP_
 #define MLOGPP_LOGGER_HPP_
 
+#include "src/filter.hpp"
 #include "src/fmt_string_with_location.hpp"
 #include "src/level.hpp"
 #include "src/record.hpp"
@@ -15,7 +16,9 @@ namespace mlogpp {
  * Each logger has a name and a minimum log level. Log records below the minimum
  * level are ignored.
  *
+ * @tparam Filter Filter policy
  */
+template <LevelFilter Filter = DynamicFilter>
 class Logger {
  public:
   /**
@@ -30,7 +33,11 @@ class Logger {
   explicit Logger(std::string_view const name,
                   std::vector<Sink> const& sinks = {},
                   LogLevel const min_level = LogLevel::kInfo)
-      : name_(name), sinks_(sinks), min_level_(min_level) {};
+      : name_(name), sinks_(sinks) {
+    if constexpr (requires { filter_.min_level = min_level; }) {
+      filter_.min_level = min_level;
+    }
+  };
 
   /**
    * @brief Add a sink to the logger.
@@ -51,7 +58,9 @@ class Logger {
    * @return Logger& Reference to the logger, allowing for method chaining.
    */
   Logger& SetMinLevel(LogLevel const level) noexcept {
-    min_level_ = level;
+    if constexpr (requires { filter_.min_level = level; }) {
+      filter_.min_level = level;
+    }
     return *this;
   };
 
@@ -73,7 +82,12 @@ class Logger {
    */
   template <LogLevel Level, typename... Args>
   void Log(FormatStringWithLocation const msg, Args&&... args) {
-    if (Level < min_level_) {
+    // compile time filter
+    if constexpr (!Filter{}.passes(Level)) {
+      return;
+    }
+    // runtime filter
+    if (!filter_.passes(Level)) {
       return;
     }
     Emit(LogRecord{Level, msg.loc, Name(), msg.fmt,
@@ -169,11 +183,16 @@ class Logger {
   std::string const name_;
   /// List of sinks to which log records will be dispatched.
   std::vector<Sink> sinks_;
-  /// Minimum log level. Log records below this level will be ignored.
-  LogLevel min_level_;
+
+  Filter filter_{};
 };
 
-using LoggerPtr = std::shared_ptr<Logger>;
+using DynamicLogger = Logger<DynamicFilter>;
+
+template <LogLevel Level>
+using StaticLogger = Logger<StaticFilter<Level>>;
+
+using LoggerPtr = std::shared_ptr<DynamicLogger>;
 
 }  // namespace mlogpp
 #endif  // MLOGPP_LOGGER_HPP_
