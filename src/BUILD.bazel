@@ -1,12 +1,21 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
 cc_library(
+    name = "mlogpp_record",
+    hdrs = [
+        ":record.hpp",
+    ],
+    include_prefix = "mlogpp",
+)
+
+cc_library(
     name = "mlogpp_formatter",
     hdrs = [
         ":format/formatter.hpp",
         ":format/json_formatter.hpp",
     ],
     include_prefix = "mlogpp",
+    deps = [":mlogpp_record"],
 )
 
 cc_library(
@@ -27,7 +36,6 @@ cc_library(
         ":fmt_string_with_location.hpp",
         ":level.hpp",
         ":logger.hpp",
-        ":record.hpp",
         ":registry.hpp",
     ],
     include_prefix = "mlogpp",
