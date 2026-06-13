@@ -4,23 +4,11 @@
 #include "src/fmt_string_with_location.hpp"
 #include "src/logger.hpp"
 #include <memory>
-#include <shared_mutex>
 #include <string_view>
-#include <unordered_map>
 
 namespace mlogpp {
 
-namespace {
-struct RegistryImpl {
-  mutable std::shared_mutex mtx;
-  std::unordered_map<std::string, std::shared_ptr<Logger>> loggers;
-
-  std::shared_ptr<Logger> find(std::string_view name) const;
-
-  // Insert or replace. Caller must hold an exclusive lock.
-  void store(std::shared_ptr<Logger> const& lgr);
-};
-}  // namespace
+struct RegistryImpl;
 
 /**
  * @brief Singleton registry that manages named loggers. Provides thread-safe
@@ -92,6 +80,7 @@ class Registry {
 
  private:
   Registry();
+  ~Registry();
 
   /**
    * @brief Internal implementation for getting or creating a logger.

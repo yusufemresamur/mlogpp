@@ -33,10 +33,10 @@ class FileSink {
     }
   };
 
-  FileSink(FileSink const&) =
-      delete("FileSink manages file stream and is not copyable");
-  FileSink& operator=(FileSink const&) =
-      delete("FileSink manages file stream and is not copyable");
+  // FileSink manages file stream and is not copyable
+  FileSink(FileSink const&) = delete;
+  // FileSink manages file stream and is not copyable
+  FileSink& operator=(FileSink const&) = delete;
 
   FileSink(FileSink&&) noexcept = default;
   FileSink& operator=(FileSink&&) noexcept = default;

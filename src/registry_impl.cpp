@@ -2,21 +2,27 @@
 #include "src/sink/sink.hpp"
 #include <memory>
 #include <mutex>
+#include <shared_mutex>
+#include <string>
+#include <unordered_map>
+
 namespace mlogpp {
 
-namespace {
+struct RegistryImpl {
+  mutable std::shared_mutex mtx;
+  std::unordered_map<std::string, std::shared_ptr<Logger>> loggers;
 
-// Retrieve an existing entry. Caller must hold at least a shared lock.
-std::shared_ptr<Logger> RegistryImpl::find(std::string_view const name) const {
-  auto it = loggers.find(std::string(name));
-  return it != loggers.end() ? it->second : nullptr;
-}
+  std::shared_ptr<Logger> find(std::string_view name) const {
+    auto it = loggers.find(std::string(name));
+    return it != loggers.end() ? it->second : nullptr;
+  }
 
-// Insert or replace. Caller must hold an exclusive lock.
-void RegistryImpl::store(std::shared_ptr<Logger> const& lgr) {
-  loggers[std::string(lgr->Name())] = std::move(lgr);
-}
-}  // namespace
+  void store(std::shared_ptr<Logger> const& lgr) {
+    loggers[std::string(lgr->Name())] = std::move(lgr);
+  }
+};
+
+Registry::~Registry() = default;
 
 Registry::Registry() : pimpl_(std::make_unique<RegistryImpl>()) {
   // Seed the registry with a default root logger that writes to stdout.
