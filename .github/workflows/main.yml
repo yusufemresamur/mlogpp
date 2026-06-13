@@ -5,7 +5,7 @@ env:
   BAZELISK_VERSION: "1.29.0"
 
 jobs:
-  build:
+  build-llvm:
     runs-on: ubuntu-latest
     steps:
     - name: Setup Bazel
@@ -17,39 +17,8 @@ jobs:
         repository-cache: true
     - name: Checkout
       uses: actions/checkout@v6
-    - name: Bazel build
+    - name: Bazel build (LLVM)
       run: bazelisk build //...
-
-  example:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-    - name: Setup Bazel
-      uses: bazel-contrib/setup-bazel@0.19.0
-      with:
-        bazelisk-version: ${{ env.BAZELISK_VERSION }}
-        bazelisk-cache: true
-        disk-cache: ${{ github.workflow }}
-        repository-cache: true
-    - name: Checkout
-      uses: actions/checkout@v6
-    - name: Run example
-      run: bazelisk run //examples:example
-  tests:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-    - name: Setup Bazel
-      uses: bazel-contrib/setup-bazel@0.19.0
-      with:
-        bazelisk-version: ${{ env.BAZELISK_VERSION }}
-        bazelisk-cache: true
-        disk-cache: ${{ github.workflow }}
-        repository-cache: true
-    - name: Checkout
-      uses: actions/checkout@v6
-    - name: "Compile and run tests"
-      run: bazelisk test //...
 
   build-gcc:
     runs-on: ubuntu-latest
@@ -65,4 +34,54 @@ jobs:
       uses: actions/checkout@v6
     - name: Bazel build (GCC)
       run: bazelisk build --config=gcc //...
+
+  example:
+    needs: build-llvm
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup Bazel
+      uses: bazel-contrib/setup-bazel@0.19.0
+      with:
+        bazelisk-version: ${{ env.BAZELISK_VERSION }}
+        bazelisk-cache: true
+        disk-cache: ${{ github.workflow }}
+        repository-cache: true
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Run example
+      run: bazelisk run //examples:example
+  
+  tests-llvm:
+    needs: build-llvm
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup Bazel
+      uses: bazel-contrib/setup-bazel@0.19.0
+      with:
+        bazelisk-version: ${{ env.BAZELISK_VERSION }}
+        bazelisk-cache: true
+        disk-cache: ${{ github.workflow }}
+        repository-cache: true
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: "Compile and run tests (LLVM)"
+      run: bazelisk test //...
+
+  tests-gcc:
+    needs: build-gcc
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup Bazel
+      uses: bazel-contrib/setup-bazel@0.19.0
+      with:
+        bazelisk-version: ${{ env.BAZELISK_VERSION }}
+        bazelisk-cache: true
+        disk-cache: ${{ github.workflow }}
+        repository-cache: true
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: "Compile and run tests (GCC)"
+      run: bazelisk test --config=gcc //...
+
+  
 
