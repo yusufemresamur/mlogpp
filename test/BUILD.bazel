@@ -9,3 +9,14 @@ cc_test(
         "@googletest//:gtest_main",
     ],
 )
+
+cc_test(
+    name = "test_formatter",
+    size = "small",
+    srcs = [":test_formatter.cpp"],
+    deps = [
+        "//src:mlogpp",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
