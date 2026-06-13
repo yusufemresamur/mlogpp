@@ -47,7 +47,7 @@ class Registry {
    * @param name Name of the logger to retrieve or create.
    * @return Logger& Reference to the requested logger.
    */
-  [[nodiscard]] static Logger& GetRef(std::string_view name) {
+  [[nodiscard]] static DynamicLogger& GetRef(std::string_view name) {
     return *instance().GetImpl(name);
   }
 
@@ -74,7 +74,7 @@ class Registry {
    *
    * @return Logger& Reference to the root logger.
    */
-  [[nodiscard]] static Logger& RootRef() {
+  [[nodiscard]] static DynamicLogger& RootRef() {
     return *mlogpp::Registry::Get("root");
   };
 

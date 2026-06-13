@@ -33,6 +33,7 @@ cc_library(
         ":registry_impl.cpp",
     ],
     hdrs = [
+        ":filter.hpp",
         ":fmt_string_with_location.hpp",
         ":level.hpp",
         ":logger.hpp",
