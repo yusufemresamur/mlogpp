@@ -70,7 +70,7 @@ jobs:
           //test/...
         cp "$(bazelisk info output_path)/_coverage/_coverage_report.dat" coverage.lcov
     - name: Upload to Codecov
-      uses: codecov/codecov-action@v5
+      uses: codecov/codecov-action@v6
       with:
         files: coverage.lcov
         token: ${{ secrets.CODECOV_TOKEN }}
