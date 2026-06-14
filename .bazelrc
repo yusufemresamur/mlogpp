@@ -3,6 +3,7 @@ build --cxxopt='-std=c++23'
 
 # GCC toolchain (f0rmiga/gcc-toolchain)
 build:gcc --extra_toolchains=@gcc_toolchain_x86_64//:cc_toolchain
+build:gcc --dynamic_mode=off
 build:gcc --linkopt='-lstdc++'
 
 build:coverage --cxxopt='-fprofile-instr-generate' --cxxopt='-fcoverage-mapping' 
