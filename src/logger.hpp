@@ -187,8 +187,14 @@ class Logger {
   Filter filter_{};
 };
 
+/// Logger with dynamic Level filtering
 using DynamicLogger = Logger<DynamicFilter>;
 
+/**
+ * @brief Logger with compile time level filtering
+ *
+ * @tparam Level Minimum level
+ */
 template <LogLevel Level>
 using StaticLogger = Logger<StaticFilter<Level>>;
 
