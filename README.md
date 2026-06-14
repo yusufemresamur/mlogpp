@@ -23,13 +23,13 @@ A lightweight modern C++ logging library with type-safe sinks, log levels, and t
 Add mlogpp to your `MODULE.bazel`:
 
 ```starlark
-# latest by 2026-06-14: 6cb7add54a4287adfde6d52424b8aff589173745
+# latest by 2026-06-14: bf363d6c5eab11f9547df3c64703cf5920fe3109
 # https://github.com/yusufemresamur/mlogpp/commits/main/
 bazel_dep(name = "mlogpp", version = "0.0.1")
 git_override(
     module_name = "mlogpp",
     remote = "https://github.com/yusufemresamur/mlogpp.git",
-    commit = "6cb7add54a4287adfde6d52424b8aff589173745",
+    commit = "bf363d6c5eab11f9547df3c64703cf5920fe3109",
 )
 ```
 
