@@ -24,6 +24,11 @@ struct RegistryImpl {
 
 Registry::~Registry() = default;
 
+void Registry::remove(std::string_view name) {
+  std::unique_lock lock(pimpl_->mtx);
+  pimpl_->loggers.erase(std::string(name));
+}
+
 Registry::Registry() : pimpl_(std::make_unique<RegistryImpl>()) {
   // Seed the registry with a default root logger that writes to stdout.
   auto root_lgr =
