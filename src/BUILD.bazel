@@ -1,8 +1,9 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
 cc_library(
-    name = "mlogpp_record",
+    name = "mlogpp_common",
     hdrs = [
+        ":level.hpp",
         ":record.hpp",
     ],
     include_prefix = "mlogpp",
@@ -15,7 +16,7 @@ cc_library(
         ":format/json_formatter.hpp",
     ],
     include_prefix = "mlogpp",
-    deps = [":mlogpp_record"],
+    deps = [":mlogpp_common"],
 )
 
 cc_library(
@@ -28,6 +29,18 @@ cc_library(
 )
 
 cc_library(
+    name = "mlogpp_async_sink",
+    srcs = [":sink/async_sink.cpp"],
+    hdrs = [":sink/async_sink.hpp"],
+    include_prefix = "mlogpp",
+    deps = [
+        ":mlogpp_common",
+        ":mlogpp_formatter",
+        ":mlogpp_sinks",
+    ],
+)
+
+cc_library(
     name = "mlogpp",
     srcs = [
         ":registry_impl.cpp",
@@ -35,13 +48,13 @@ cc_library(
     hdrs = [
         ":filter.hpp",
         ":fmt_string_with_location.hpp",
-        ":level.hpp",
         ":logger.hpp",
         ":registry.hpp",
     ],
     include_prefix = "mlogpp",
     visibility = ["//visibility:public"],
     deps = [
+        ":mlogpp_async_sink",
         ":mlogpp_formatter",
         ":mlogpp_sinks",
     ],
