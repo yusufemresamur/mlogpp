@@ -23,3 +23,11 @@ cc_binary(
         "//src:mlogpp",
     ],
 )
+
+cc_binary(
+    name = "async_sink",
+    srcs = ["async_sink.cpp"],
+    deps = [
+        "//src:mlogpp",
+    ],
+)
