@@ -22,11 +22,12 @@ struct AsyncSinkImpl {
         worker([this](std::stop_token const& stoken) { Work(stoken); }) {}
 
   void Work(std::stop_token const& stoken) {
-    while (!stoken.stop_requested()) {
+    while (true) {
       std::unique_lock lock{mutex};
       // Wakes when queue is non-empty OR stop is requested.
       // Returns false only when stop requested with an empty queue.
-      cv.wait(lock, stoken, [this] { return !queue.empty(); });
+      bool const has_work =
+          cv.wait(lock, stoken, [this] { return !queue.empty(); });
       while (!queue.empty()) {
         auto record = std::move(queue.front());
         queue.pop();
@@ -34,6 +35,8 @@ struct AsyncSinkImpl {
         inner(record);
         lock.lock();
       }
+      // Exit only after the queue is confirmed empty and stop was requested.
+      if (!has_work) break;
     }
   }
 };
