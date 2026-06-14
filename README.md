@@ -7,6 +7,7 @@ A lightweight modern C++ logging library with type-safe sinks, log levels, and t
 ## Features
 
 - **Type-safe sinks**: Add any callable as a sink without wrapper boilerplate
+- **Async sink**: Wrap any sink for non-blocking background I/O with bounded queue and clean shutdown
 - **Log levels**: Trace, Debug, Info, Warn, Error, Fatal with dynamic filtering at runtime or static filtering at compile time
 - **Named loggers**: Registry-based logger management with shared instances
 - **Thread-safe**: Concurrent access to loggers and sinks
@@ -123,6 +124,35 @@ int main() {
 }
 ```
 
+## Async sink
+
+`MakeAsyncSink` wraps any existing sink and moves its I/O off the calling thread. Log records are enqueued into a bounded queue. A dedicated `std::jthread` drains it in the background. Callers never block. If the queue is full, the record is dropped silently.
+
+On destruction the background thread is stopped, all queued records are flushed, and the thread is joined before the destructor returns. No records are lost on clean shutdown.
+
+```cpp
+#include "mlogpp/logger.hpp"
+#include "mlogpp/sink/async_sink.hpp"
+#include "mlogpp/sink/file_sink.hpp"
+
+int main() {
+  mlogpp::DynamicLogger logger{"app"};
+
+  // File writes happen on a background thread; callers return immediately.
+  logger.AddSink(mlogpp::MakeAsyncSink(mlogpp::MakeFileSink("app.log")));
+
+  logger.Info("this returns before the line is written to disk");
+}
+```
+
+The queue capacity defaults to 8192 records and can be overridden:
+
+```cpp
+logger.AddSink(mlogpp::MakeAsyncSink(mlogpp::MakeFileSink("app.log"), 1024));
+```
+
+Any sink works as the inner target - console, file, or a custom lambda sink.
+
 ## Custom sinks
 
 Any callable with signature `(const mlogpp::LogRecord&) -> void` satisfies the `SinkFunction` concept and can be passed directly to `AddSink`. No subclassing or wrapper is needed.
@@ -157,6 +187,7 @@ bazel build //...
 ```bash
 bazel run //examples:example
 bazel run //examples:static_filter
+bazel run //examples:async_sink
 ```
 
 ## Tests
