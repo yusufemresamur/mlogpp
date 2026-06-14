@@ -2,6 +2,8 @@
 #include <gtest/gtest.h>
 #include <cstdint>
 
+// TODO (yusufemresamur): review AI generated tests
+
 namespace mlogpp {
 
 // ── Underlying type ──────────────────────────────────────────────────────────
@@ -15,8 +17,8 @@ TEST(LogLevelTest, UnderlyingTypeIsUint8) {
 TEST(LogLevelTest, SeverityOrderIsAscending) {
   static_assert(LogLevel::kTrace < LogLevel::kDebug);
   static_assert(LogLevel::kDebug < LogLevel::kInfo);
-  static_assert(LogLevel::kInfo  < LogLevel::kWarn);
-  static_assert(LogLevel::kWarn  < LogLevel::kError);
+  static_assert(LogLevel::kInfo < LogLevel::kWarn);
+  static_assert(LogLevel::kWarn < LogLevel::kError);
   static_assert(LogLevel::kError < LogLevel::kFatal);
 }
 
@@ -26,18 +28,20 @@ TEST(LogLevelTest, EqualityHolds) {
   static_assert(!(LogLevel::kTrace == LogLevel::kFatal));
 }
 
-// ── ToString — all named levels ───────────────────────────────────────────────
+// ── ToString — all named levels
+// ───────────────────────────────────────────────
 
 TEST(ToStringTest, NamedLevelsReturnExpectedStrings) {
   static_assert(ToString(LogLevel::kTrace) == "TRACE");
   static_assert(ToString(LogLevel::kDebug) == "DEBUG");
-  static_assert(ToString(LogLevel::kInfo)  == "INFO");
-  static_assert(ToString(LogLevel::kWarn)  == "WARN");
+  static_assert(ToString(LogLevel::kInfo) == "INFO");
+  static_assert(ToString(LogLevel::kWarn) == "WARN");
   static_assert(ToString(LogLevel::kError) == "ERROR");
   static_assert(ToString(LogLevel::kFatal) == "FATAL");
 }
 
-// ── ToString — invalid / out-of-range value ───────────────────────────────────
+// ── ToString — invalid / out-of-range value
+// ───────────────────────────────────
 
 TEST(ToStringTest, OutOfRangeValueReturnsUnknown) {
   // Cast an integer that doesn't correspond to any enumerator.
@@ -51,11 +55,12 @@ TEST(ToStringTest, ValueJustPastFatalReturnsUnknown) {
   EXPECT_EQ(ToString(kPastFatal), "UNKNOWN");
 }
 
-// ── ToString — return type ────────────────────────────────────────────────────
+// ── ToString — return type
+// ────────────────────────────────────────────────────
 
 TEST(ToStringTest, ReturnTypeIsStringView) {
-  static_assert(std::is_same_v<decltype(ToString(LogLevel::kInfo)),
-                               std::string_view>);
+  static_assert(
+      std::is_same_v<decltype(ToString(LogLevel::kInfo)), std::string_view>);
 }
 
 TEST(ToStringTest, IsNoexcept) {
@@ -67,7 +72,8 @@ TEST(ToStringTest, IsConstexpr) {
   static_assert(sv == "WARN");
 }
 
-// ── ToString — returned strings are non-empty ─────────────────────────────────
+// ── ToString — returned strings are non-empty
+// ─────────────────────────────────
 
 TEST(ToStringTest, AllNamedLevelsReturnNonEmptyString) {
   constexpr LogLevel kLevels[] = {

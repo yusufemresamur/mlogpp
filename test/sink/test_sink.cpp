@@ -5,9 +5,12 @@
 #include <fstream>
 #include <string>
 
+// TODO (yusufemresamur): review AI generated tests
+
 namespace mlogpp {
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Helpers
+// ───────────────────────────────────────────────────────────────────
 
 namespace {
 
@@ -24,7 +27,8 @@ struct FixedFormatter {
 
 }  // namespace
 
-// ── SinkFunction concept ──────────────────────────────────────────────────────
+// ── SinkFunction concept
+// ──────────────────────────────────────────────────────
 
 struct ValidSinkFn {
   void operator()(LogRecord const&) const {}
@@ -60,7 +64,8 @@ TEST(SinkFunctionConcept, FileSinkSatisfiesConcept) {
   static_assert(SinkFunction<FileSink<FixedFormatter>>);
 }
 
-// ── Sink — construction & call ────────────────────────────────────────────────
+// ── Sink — construction & call
+// ────────────────────────────────────────────────
 
 TEST(SinkTest, ConstructFromLambdaAndCall) {
   bool called = false;
@@ -128,7 +133,8 @@ TEST(SinkTest, MoveAssignmentLeavesCallableInDestination) {
   EXPECT_TRUE(called);
 }
 
-// ── MakeConsoleSink ───────────────────────────────────────────────────────────
+// ── MakeConsoleSink
+// ───────────────────────────────────────────────────────────
 
 TEST(MakeConsoleSinkTest, ReturnsSinkThatIsCallable) {
   Sink s = MakeConsoleSink();
@@ -140,13 +146,14 @@ TEST(MakeConsoleSinkTest, AcceptsCustomFormatter) {
   EXPECT_NO_THROW(s(MakeRecord()));
 }
 
-// ── FileSink fixture ──────────────────────────────────────────────────────────
+// ── FileSink fixture
+// ──────────────────────────────────────────────────────────
 
 class FileSinkTest : public ::testing::Test {
  protected:
   void SetUp() override {
     path_ = std::filesystem::temp_directory_path() /
-             ("mlogpp_test_" + std::to_string(counter_++) + ".log");
+            ("mlogpp_test_" + std::to_string(counter_++) + ".log");
     std::filesystem::remove(path_);
   }
 
@@ -162,7 +169,8 @@ class FileSinkTest : public ::testing::Test {
 };
 int FileSinkTest::counter_ = 0;
 
-// ── FileSink — construction ───────────────────────────────────────────────────
+// ── FileSink — construction
+// ───────────────────────────────────────────────────
 
 TEST_F(FileSinkTest, ConstructsWithValidPath) {
   EXPECT_NO_THROW(FileSink<> sink{path_});
@@ -184,7 +192,9 @@ TEST_F(FileSinkTest, ErrorMessageContainsPath) {
 }
 
 TEST_F(FileSinkTest, CreatesFileOnConstruction) {
-  { FileSink<> sink{path_}; }
+  {
+    FileSink<> sink{path_};
+  }
   EXPECT_TRUE(std::filesystem::exists(path_));
 }
 
@@ -206,7 +216,8 @@ TEST_F(FileSinkTest, IsMoveAssignable) {
   static_assert(std::is_move_assignable_v<FileSink<>>);
 }
 
-// ── FileSink — writing ────────────────────────────────────────────────────────
+// ── FileSink — writing
+// ────────────────────────────────────────────────────────
 
 TEST_F(FileSinkTest, WritesSingleRecord) {
   {
@@ -250,7 +261,9 @@ TEST_F(FileSinkTest, WritesMultipleRecordsInOrder) {
 
 TEST_F(FileSinkTest, AppendsToExistingFile) {
   // Pre-populate
-  { std::ofstream{path_} << "PRE_EXISTING\n"; }
+  {
+    std::ofstream{path_} << "PRE_EXISTING\n";
+  }
   {
     FileSink<FixedFormatter> sink{path_};
     sink(MakeRecord());
@@ -291,7 +304,8 @@ TEST_F(FileSinkTest, MoveConstructedSinkWritesToSameFile) {
   EXPECT_EQ(ReadAll(), "FIXED\n");
 }
 
-// ── MakeFileSink ──────────────────────────────────────────────────────────────
+// ── MakeFileSink
+// ──────────────────────────────────────────────────────────────
 
 TEST_F(FileSinkTest, MakeFileSinkReturnsSinkThatWrites) {
   {
