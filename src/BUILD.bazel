@@ -13,6 +13,7 @@ cc_library(
     name = "mlogpp_formatter",
     hdrs = [
         ":format/formatter.hpp",
+        ":format/json_escape.hpp",
         ":format/json_formatter.hpp",
     ],
     include_prefix = "mlogpp",

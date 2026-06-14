@@ -2,6 +2,7 @@
 #ifndef MLOGPP_JSON_FORMATTER_HPP_
 #define MLOGPP_JSON_FORMATTER_HPP_
 #include "formatter.hpp"
+#include "json_escape.hpp"
 
 namespace mlogpp {
 
@@ -17,8 +18,9 @@ struct JSONFormatter {
         std::chrono::duration_cast<std::chrono::milliseconds>(
             r.timestamp.time_since_epoch())
             .count(),
-        ToString(r.level), r.logger_name, r.location.file_name(),
-        r.location.line(), r.message);
+        ToString(r.level), detail::JsonEscape(r.logger_name),
+        detail::JsonEscape(r.location.file_name()), r.location.line(),
+        detail::JsonEscape(r.message));
   };
 };
 
