@@ -17,7 +17,7 @@ struct RegistryImpl {
     return it != loggers.end() ? it->second : nullptr;
   }
 
-  void store(std::shared_ptr<DynamicLogger> const& lgr) {
+  void store(std::shared_ptr<DynamicLogger> lgr) {
     loggers[std::string(lgr->Name())] = std::move(lgr);
   }
 };
@@ -48,6 +48,11 @@ Registry::Registry() : pimpl_(std::make_unique<RegistryImpl>()) {
   auto new_lgr = std::make_shared<DynamicLogger>(name);
   {
     std::unique_lock lock(pimpl_->mtx);
+    // Re-check: another thread may have inserted between our shared-lock
+    // read and acquiring this unique lock.
+    if (auto lgr = pimpl_->find(name); lgr != nullptr) {
+      return lgr;
+    }
     pimpl_->store(new_lgr);
   }
   return new_lgr;
