@@ -1,0 +1,5 @@
+alias(
+    name = "mlogpp",
+    actual = "//src:mlogpp",
+    visibility = ["//visibility:public"],
+)
