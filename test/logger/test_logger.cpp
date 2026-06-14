@@ -141,7 +141,7 @@ TYPED_TEST(LoggerInterfaceTest, LogRecordHasNonNullSourceLocation) {
   logger.AddSink(
       Sink{[&captured](LogRecord const& r) { captured = r.location; }});
   logger.template Log<LogLevel::kInfo>("msg");
-  EXPECT_NE(captured.line(), 0u);
+  EXPECT_NE(captured.line(), 0U);
   EXPECT_NE(captured.file_name(), std::string_view{});
 }
 
@@ -456,7 +456,8 @@ TEST(LoggerPtrTest, DispatchesViaSharedPtr) {
 
 TEST(LoggerPtrTest, SharedOwnershipIsObservable) {
   LoggerPtr p1 = std::make_shared<DynamicLogger>("test");
-  LoggerPtr p2 = p1;
+  // justification: intentional copy
+  LoggerPtr p2 = p1;  // NOLINT(performance-unnecessary-copy-initialization)
   EXPECT_EQ(p1.get(), p2.get());
   EXPECT_EQ(p1.use_count(), 2);
 }

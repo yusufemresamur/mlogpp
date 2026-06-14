@@ -22,10 +22,10 @@ TEST(LevelFilterConcept, StaticFilterSatisfiesConcept) {
 
 struct NoPasses {};
 struct WrongReturn {
-  int passes(LogLevel) const { return 1; }
+  static int passes(LogLevel) { return 1; }
 };
 struct CorrectFilter {
-  bool passes(LogLevel) const { return true; }
+  static bool passes(LogLevel) { return true; }
 };
 
 TEST(LevelFilterConcept, TypeWithoutPassesDoesNotSatisfy) {
@@ -116,11 +116,11 @@ TEST(DynamicFilterTest, RuntimeUpdate) {
 }
 
 TEST(DynamicFilterTest, IsConstexprEvaluable) {
-  constexpr DynamicFilter f{LogLevel::kInfo};
-  static_assert(f.passes(LogLevel::kInfo));
-  static_assert(f.passes(LogLevel::kFatal));
-  static_assert(!f.passes(LogLevel::kTrace));
-  static_assert(!f.passes(LogLevel::kDebug));
+  constexpr DynamicFilter kFilter{LogLevel::kInfo};
+  static_assert(kFilter.passes(LogLevel::kInfo));
+  static_assert(kFilter.passes(LogLevel::kFatal));
+  static_assert(!kFilter.passes(LogLevel::kTrace));
+  static_assert(!kFilter.passes(LogLevel::kDebug));
 }
 
 // ── StaticFilter ─────────────────────────────────────────────────────────────
@@ -188,9 +188,9 @@ TEST(StaticFilterTest, IsConstexprEvaluable) {
 
 TEST(StaticFilterTest, PassesIsStaticMethod) {
   // passes() should be callable on the type without an instance
-  constexpr bool result =
+  constexpr bool kResult =
       StaticFilter<LogLevel::kWarn>::passes(LogLevel::kError);
-  static_assert(result);
+  static_assert(kResult);
 }
 
 }  // namespace mlogpp

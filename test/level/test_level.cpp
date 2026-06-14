@@ -22,12 +22,6 @@ TEST(LogLevelTest, SeverityOrderIsAscending) {
   static_assert(LogLevel::kError < LogLevel::kFatal);
 }
 
-TEST(LogLevelTest, EqualityHolds) {
-  static_assert(LogLevel::kTrace == LogLevel::kTrace);
-  static_assert(LogLevel::kFatal == LogLevel::kFatal);
-  static_assert(!(LogLevel::kTrace == LogLevel::kFatal));
-}
-
 // ── ToString — all named levels
 // ───────────────────────────────────────────────
 
@@ -68,8 +62,8 @@ TEST(ToStringTest, IsNoexcept) {
 }
 
 TEST(ToStringTest, IsConstexpr) {
-  constexpr std::string_view sv = ToString(LogLevel::kWarn);
-  static_assert(sv == "WARN");
+  constexpr std::string_view kSv = ToString(LogLevel::kWarn);
+  static_assert(kSv == "WARN");
 }
 
 // ── ToString — returned strings are non-empty

@@ -234,7 +234,7 @@ TEST_F(FileSinkTest, EachRecordEndsWithNewline) {
     sink(MakeRecord());
   }
   std::string const content = ReadAll();
-  ASSERT_GE(content.size(), 2u);
+  ASSERT_GE(content.size(), 2U);
   // Both lines end with '\n' — last char of file is '\n'
   EXPECT_EQ(content.back(), '\n');
   // Two "FIXED" lines means two newlines

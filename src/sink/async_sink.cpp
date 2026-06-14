@@ -19,9 +19,9 @@ struct AsyncSinkImpl {
   explicit AsyncSinkImpl(Sink inner_, std::size_t const capacity)
       : inner(std::move(inner_)),
         capacity(capacity),
-        worker([this](std::stop_token stoken) { Work(stoken); }) {}
+        worker([this](std::stop_token const& stoken) { Work(stoken); }) {}
 
-  void Work(std::stop_token stoken) {
+  void Work(std::stop_token const& stoken) {
     while (!stoken.stop_requested()) {
       std::unique_lock lock{mutex};
       // Wakes when queue is non-empty OR stop is requested.
