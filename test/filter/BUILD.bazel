@@ -1,0 +1,12 @@
+load("@rules_cc//cc:cc_test.bzl", "cc_test")
+
+cc_test(
+    name = "test_filter",
+    size = "small",
+    srcs = [":test_filter.cpp"],
+    deps = [
+        "//src:mlogpp",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
