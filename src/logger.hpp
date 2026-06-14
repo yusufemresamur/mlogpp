@@ -7,6 +7,8 @@
 #include "src/level.hpp"
 #include "src/record.hpp"
 #include "src/sink/sink.hpp"
+#include <mutex>
+#include <shared_mutex>
 #include <string>
 #include <vector>
 namespace mlogpp {
@@ -45,8 +47,9 @@ class Logger {
    * @param sink Sink to add.
    * @return Logger& Reference to the logger, allowing for method chaining.
    */
-  Logger& AddSink(Sink&& sink) noexcept {
-    sinks_.push_back(sink);
+  Logger& AddSink(Sink&& sink) {
+    std::unique_lock lock{mtx_};
+    sinks_.push_back(std::move(sink));
     return *this;
   };
 
@@ -57,7 +60,8 @@ class Logger {
    * @param level Level to set as the minimum log level.
    * @return Logger& Reference to the logger, allowing for method chaining.
    */
-  Logger& SetMinLevel(LogLevel const level) noexcept {
+  Logger& SetMinLevel(LogLevel const level) {
+    std::unique_lock lock{mtx_};
     if constexpr (requires { filter_.min_level = level; }) {
       filter_.min_level = level;
     }
@@ -86,9 +90,12 @@ class Logger {
     if constexpr (!Filter{}.passes(Level)) {
       return;
     }
-    // runtime filter
-    if (!filter_.passes(Level)) {
-      return;
+    // runtime filter (under lock so SetMinLevel is seen consistently)
+    {
+      std::shared_lock lock{mtx_};
+      if (!filter_.passes(Level)) {
+        return;
+      }
     }
     Emit(LogRecord{Level, msg.loc, Name(), msg.fmt,
                    std::forward<Args>(args)...});
@@ -173,14 +180,17 @@ class Logger {
    *
    * @param r Log record to emit.
    */
-  void Emit(LogRecord const& r) noexcept {
+  void Emit(LogRecord const& r) {
+    std::shared_lock lock{mtx_};
     for (Sink& sink : sinks_) {
       sink(r);
     }
   };
 
+  /// Protects sinks_ and filter_ for concurrent Log/AddSink/SetMinLevel.
+  mutable std::shared_mutex mtx_;
   /// Name of the logger, used in log records to identify the source of logs.
-  std::string const name_;
+  std::string name_;
   /// List of sinks to which log records will be dispatched.
   std::vector<Sink> sinks_;
 
