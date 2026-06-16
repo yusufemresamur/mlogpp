@@ -95,8 +95,7 @@ class FileSink {
  */
 template <FormatterFunction F = DefaultFormatter>
 [[nodiscard]] inline Sink MakeFileSink(
-    std::filesystem::path& path,
-    LogLevel const flush_level = LogLevel::kError) {
+    std::filesystem::path path, LogLevel const flush_level = LogLevel::kError) {
   return Sink{FileSink<F>{std::move(path), flush_level}};
 }
 
