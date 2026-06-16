@@ -298,9 +298,11 @@ TEST_F(FileSinkTest, CustomFormatterOutputOverridesDefault) {
 }
 
 TEST_F(FileSinkTest, MoveConstructedSinkWritesToSameFile) {
-  FileSink<FixedFormatter> s1{path_};
-  FileSink<FixedFormatter> s2{std::move(s1)};
-  s2(MakeRecord());
+  {
+    FileSink<FixedFormatter> s1{path_};
+    FileSink<FixedFormatter> s2{std::move(s1)};
+    s2(MakeRecord());
+  }  // sink destroyed: buffered output is flushed on close
   EXPECT_EQ(ReadAll(), "FIXED\n");
 }
 
@@ -330,10 +332,12 @@ TEST_F(FileSinkTest, MakeFileSinkWithCustomFormatter) {
 }
 
 TEST_F(FileSinkTest, MakeFileSinkCopiedSinkSharesFile) {
-  Sink s1 = MakeFileSink<FixedFormatter>(path_);
-  Sink s2 = s1;  // shared_ptr copy — same underlying FileSink
-  s1(MakeRecord());
-  s2(MakeRecord());
+  {
+    Sink s1 = MakeFileSink<FixedFormatter>(path_);
+    Sink s2 = s1;  // shared_ptr copy — same underlying FileSink
+    s1(MakeRecord());
+    s2(MakeRecord());
+  }  // sinks destroyed: buffered output is flushed on close
   // Two lines written
   std::string const content = ReadAll();
   EXPECT_EQ(std::count(content.begin(), content.end(), '\n'), 2);
