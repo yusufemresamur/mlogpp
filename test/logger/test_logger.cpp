@@ -130,9 +130,9 @@ TYPED_TEST(LoggerInterfaceTest, LogRecordHasFormattedMessage) {
   auto logger = MakePassAllLogger<TypeParam>("test");
   std::string captured;
   logger.AddSink(
-      Sink{[&captured](LogRecord const& r) { captured = r.message; }});
-  logger.template Log<LogLevel::kInfo>("hello {}", 42);
-  EXPECT_EQ(captured, "hello 42");
+      Sink{[&captured](LogRecord const& r) { captured = r.message(); }});
+  logger.template Log<LogLevel::kInfo>("hello {} {} {}", 42, 41, 40);
+  EXPECT_EQ(captured, "hello 42 41 40");
 }
 
 TYPED_TEST(LoggerInterfaceTest, LogRecordHasNonNullSourceLocation) {
@@ -200,7 +200,7 @@ TYPED_TEST(LoggerInterfaceTest, ConvenienceMethodsForwardFormatArgs) {
   auto logger = MakePassAllLogger<TypeParam>("test");
   std::string captured;
   logger.AddSink(
-      Sink{[&captured](LogRecord const& r) { captured = r.message; }});
+      Sink{[&captured](LogRecord const& r) { captured = r.message(); }});
 
   logger.Trace("trace {}", 1);
   EXPECT_EQ(captured, "trace 1");

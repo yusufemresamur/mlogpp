@@ -8,7 +8,7 @@ int main() {
   // Lambda sink — forwards errors to an external alerting system.
   logger.AddSink(mlogpp::Sink{[](mlogpp::LogRecord const& r) {
     if (r.level >= mlogpp::LogLevel::kError) {
-      std::println(stderr, "[ALERT] {}", r.message);
+      std::println(stderr, "[ALERT] {}", r.message());
     }
   }});
 

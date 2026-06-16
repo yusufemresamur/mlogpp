@@ -228,7 +228,7 @@ TEST(GlobalLoggingTest, InfoForwardsToRootLogger) {
   // Use a shared_ptr capture so the sink remains valid after test teardown.
   auto captured = std::make_shared<std::string>();
   Registry::RootRef().AddSink(Sink{[captured](LogRecord const& r) {
-    if (r.level == LogLevel::kInfo) *captured = r.message;
+    if (r.level == LogLevel::kInfo) *captured = r.message();
   }});
   mlogpp::Info("forwarded {}", 42);
   EXPECT_EQ(*captured, "forwarded 42");
@@ -265,7 +265,7 @@ TEST(GlobalLoggingTest, TraceNotForwardedAtDefaultMinLevel) {
 TEST(GlobalLoggingTest, GlobalFunctionsForwardFormattedArgs) {
   auto captured = std::make_shared<std::string>();
   Registry::RootRef().AddSink(Sink{[captured](LogRecord const& r) {
-    if (r.level == LogLevel::kInfo) *captured = r.message;
+    if (r.level == LogLevel::kInfo) *captured = r.message();
   }});
   mlogpp::Info("value={} str={}", 7, "x");
   EXPECT_EQ(*captured, "value=7 str=x");

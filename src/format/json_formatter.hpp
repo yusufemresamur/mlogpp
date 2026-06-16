@@ -20,7 +20,7 @@ struct JSONFormatter {
             .count(),
         ToString(r.level), detail::JsonEscape(r.logger_name),
         detail::JsonEscape(r.location.file_name()), r.location.line(),
-        detail::JsonEscape(r.message));
+        detail::JsonEscape(r.message()));
   };
 };
 

@@ -78,7 +78,7 @@ TEST(SinkTest, ConstructFromFunctorAndForwardsRecord) {
   std::string captured;
   struct Cap {
     std::string& out;
-    void operator()(LogRecord const& r) const { out = r.message; }
+    void operator()(LogRecord const& r) const { out = r.message(); }
   };
   Sink s{Cap{captured}};
   s(MakeRecord(LogLevel::kInfo, "hello"));

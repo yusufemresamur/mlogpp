@@ -29,7 +29,7 @@ struct DefaultFormatter {
                            r.timestamp.time_since_epoch())
                            .count(),
                        ToString(r.level), r.logger_name, r.location.file_name(),
-                       r.location.line(), r.message);
+                       r.location.line(), r.message());
   };
 };
 static_assert(FormatterFunction<DefaultFormatter>,
