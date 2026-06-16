@@ -74,3 +74,14 @@ jobs:
       with:
         files: coverage.lcov
         token: ${{ secrets.CODECOV_TOKEN }}
+
+  benchmark:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - uses: ./.github/actions/setup-bazel
+      with:
+        bazelisk-version: ${{ env.BAZELISK_VERSION }}
+    - name: Run benchmark
+      run: bazelisk run -c opt //benchmark:log_benchmark

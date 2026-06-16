@@ -1,0 +1,10 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+
+cc_binary(
+    name = "log_benchmark",
+    srcs = ["log_benchmark.cpp"],
+    deps = [
+        "//src:mlogpp",
+        "@google_benchmark//:benchmark",
+    ],
+)
